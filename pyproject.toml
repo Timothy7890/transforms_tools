@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "transforms_tools"
+version = "1.0.0"
+description = "相机位姿 transforms.json 标定与统一坐标系工具集(标定 rig 机械常数、缩放到真实 mm、对齐 canonical 坐标系、整理与写 aabb)"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "Xin Yang" }]
+dependencies = [
+    "numpy>=1.20",
+    "scipy>=1.6",
+]
+
+# 可视化(transforms_viz)所需的额外依赖:pip install -e ".[viz]"
+[project.optional-dependencies]
+viz = [
+    "plotly>=5.0",
+    "fastapi>=0.100",
+    "uvicorn>=0.20",
+]
+
+[project.scripts]
+transforms_tools = "transforms_tools.cli:main"
+transforms_viz = "transforms_tools.visualize:main"
+copy_first_images = "transforms_tools.copy_first_images:main"
+
+# 包放在 scripts/ 目录下,便于分类;这里告诉 setuptools 去 scripts/ 里找包。
+[tool.setuptools.packages.find]
+where = ["scripts"]
+include = ["transforms_tools*"]
