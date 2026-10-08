@@ -46,6 +46,24 @@ copy_first_images --help
 - **[docs/安装与使用说明.md](docs/安装与使用说明.md)** —— 环境安装、命令行运行方式、每个命令的参数与完整示例。
 - **[docs/原理与公式说明.md](docs/原理与公式说明.md)** —— 数学原理:标定模型、未知量与方程、坐标系对齐的推导。
 
+## 已有标定结果
+
+`calib/` 下保存了已标定好的机械常数,换机器后无需原始数据即可直接复用:
+
+- `calib/K04/rig_calib.json`:用辣椒 K04 的 6 个好日期(20251001/1024/1026/1027/1029/1031)
+  联合标定的 `r`、`L`。`r`、`L` 与 disp、俯仰无关,改过 disp/俯仰或增减相机后仍可复用。
+- `calib/configs/rice_2026_9cams.json`:2026 年水稻采集的 9 相机配置(含 `CameraDisplacement`)。
+
+用法:把对应配置 json 放进每个采集目录(文件名不以 `transforms`/`plantsegnerf` 开头),然后
+
+```bash
+transforms_tools canonicalize -i <根> -L <层级> --camera-ids 1 2 3 4 5 6 -rl calib/K04
+```
+
+注意:现有辣椒 canonical 文件(`Case_02/pepper*`)当时用的 disp 配置(`K04.json`,已丢失)与
+`rig_calib.json` 不完全一致,用本标定重算辣椒会得到约 0.958 的尺度;即两者"毫米"相差约 4%,
+跨数据集比较绝对尺寸前建议实测一个物理距离核对。
+
 ## 依赖
 
 - 核心:Python ≥ 3.8,`numpy`、`scipy`(安装时自动拉取)。
@@ -57,6 +75,9 @@ copy_first_images --help
 transforms_tools/
 ├── README.md                     # 本文件
 ├── pyproject.toml                # 打包/安装配置(注册命令行入口)
+├── calib/
+│   ├── K04/rig_calib.json        # 已标定的机械常数 r、L(可直接复用)
+│   └── configs/                  # 设备相机配置(含 CameraDisplacement)
 ├── docs/
 │   ├── 安装与使用说明.md          # 安装与使用
 │   └── 原理与公式说明.md          # 原理与公式
